@@ -25,10 +25,12 @@ func (j JavBest) Download(javID string) error {
 		url, err = j.Search(javID)
 		//遇到网络错误进行重试
 		if err != nil {
-			if t != j.Repeat-1 {
-				continue
+			if err == ErrNotFound {
+				return err
+			} else if t == j.Repeat-1 {
+				return err
 			}
-			return err
+			continue
 		}
 		//没找到直接返回
 		if url == "" {

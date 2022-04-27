@@ -82,6 +82,12 @@ func main() {
 		if isFc2 {
 			javID = "FC2-PPV-" + javID[4:]
 		}
+
+		if jav.IsBlockJav(javID) {
+			c.FileFromFS("static/notFound.png", http.FS(static))
+			return
+		}
+
 		LoadImg := func() {
 			if file.IsExist(config.ImgPath() + javID + ".jpg") {
 				c.File(config.ImgPath() + javID + ".jpg")

@@ -19,19 +19,21 @@ type JavStore struct {
 func (j JavStore) Download(javID string) error {
 	j.Limit <- struct{}{}
 	defer func() { <-j.Limit }()
-
 	var url string
 	var err error
 	for t := 0; t < j.Repeat; t++ {
 		url, err = j.Search(javID)
 		//遇到网络错误进行重试
 		if err != nil {
-			if t == j.Repeat-1 {
+			if err == ErrNotFound {
+				return err
+			} else if t == j.Repeat-1 {
 				return err
 			}
 			continue
 		}
 		//没找到直接返回
+
 		if url == "" {
 			return ErrNotFound
 		}

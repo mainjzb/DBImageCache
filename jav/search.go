@@ -9,25 +9,145 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
 var downloadTime = 60 * time.Second
 var connectTime = 20 * time.Second
 
-//todo: 屏蔽VR相关，减少查找
-var VRLists = []string{
-	"CVPS",
-	"DSVR",
-	"EIN",
-	"HNVR",
-	"IPVR",
-	"JUVR",
-	"KAVR",
-	"OVVR",
-	"VRKM",
-	"WAVR",
-	"MDVR",
+var VRLists = map[string]bool{
+	"BIBIVR":   true,
+	"KBVR":     true,
+	"MAXVRH":   true,
+	"TVTM":     true,
+	"WVR":      true,
+	"PYDVR":    true,
+	"PPVR":     true,
+	"HUNVR":    true,
+	"CJVR":     true,
+	"MLVR":     true,
+	"DECOP":    true,
+	"PRDVR":    true,
+	"QVRT":     true,
+	"PXVR":     true,
+	"KIWVRB":   true,
+	"YPY":      true,
+	"FSVSS":    true,
+	"DOVR":     true,
+	"FSVR":     true,
+	"HAY":      true,
+	"CCVB":     true,
+	"GOPJ":     true,
+	"VRVR":     true,
+	"MRVR":     true,
+	"WFBVR":    true,
+	"MANIVR":   true,
+	"DECHA":    true,
+	"FTVR":     true,
+	"SIVR":     true,
+	"TMAVR":    true,
+	"SLVR":     true,
+	"HOTVR":    true,
+	"VRVRW":    true,
+	"WOW":      true,
+	"3DSVR":    true,
+	"BFKB":     true,
+	"CAREM":    true,
+	"CLVR":     true,
+	"KMVR":     true,
+	"HHHVR":    true,
+	"MIVR":     true,
+	"ROYVR":    true,
+	"XBVR":     true,
+	"VRVRP":    true,
+	"AJVRBX":   true,
+	"MTBVR":    true,
+	"KOLVRB":   true,
+	"CAFUKU":   true,
+	"NK":       true,
+	"VRGL":     true,
+	"MAXAVRF":  true,
+	"FKONE":    true,
+	"FKHUNT":   true,
+	"VOSF":     true,
+	"VVVR":     true,
+	"VRSPFUKU": true,
+	"NGVR":     true,
+	"URVRSP":   true,
+	"EBVR":     true,
+	"GUNM":     true,
+	"MTVR":     true,
+	"REDVR":    true,
+	"EXVR":     true,
+	"NKKVR":    true,
+	"MAXVR":    true,
+	"OYCVR":    true,
+	"CAPI":     true,
+	"ATVR":     true,
+	"CRVR":     true,
+	"JPSVR":    true,
+	"CABE":     true,
+	"KIWVR":    true,
+	"DFBVR":    true,
+	"FCVR":     true,
+	"PRVR":     true,
+	"CASMANI":  true,
+	"RVR":      true,
+	"AJVR":     true,
+	"CAFR":     true,
+	"CVPS":     true,
+	"DSVR":     true,
+	"EIN":      true,
+	"CCVR":     true,
+	"HNVR":     true,
+	"IPVR":     true,
+	"JUVR":     true,
+	"KAVR":     true,
+	"KIVR":     true,
+	"MDVR":     true,
+	"NHVR":     true,
+	"OVVR":     true,
+	"VKVR":     true,
+	"VRKM":     true,
+	"WAVR":     true,
+	"WPVR":     true,
+	"TPVR":     true,
+	"BUZX":     true,
+	"COSVR":    true,
+	"TPRM":     true,
+	"VOSM":     true,
+	"SAVR":     true,
+	"HVR":      true,
+	"CAIM":     true,
+	"BNVR":     true,
+	"SCVR":     true,
+	"OPVR":     true,
+	"AVERV":    true,
+	"DORI":     false,
+	"HIND":     true,
+	"ANDYHQVR": true,
+	"SLR":      true,
+	"C":        false,
+	"DTVR":     true,
+	"VRXSVR":   true,
+	"KOMZ":     true,
+	"SPVR":     true,
+	"CACA":     true,
+	"CAMI":     true,
+	"CBIKMV":   true,
+	"EXDP":     true,
+	"DAVR":     true,
+	"COSBVR":   true,
+}
+
+func IsBlockJav(javID string) bool {
+	index := strings.LastIndexAny(javID, "-")
+	if index < 0 {
+		panic("javID error:" + javID)
+	}
+
+	return VRLists[javID[:index]]
 }
 
 type JavImger interface {
@@ -92,7 +212,7 @@ func DownloadImage(url, filePath, javID string) *errgroup.Group {
 			logger.Error(fileName + " file move error: " + err.Error())
 			return err
 		}
-		return ErrNotFound
+		return nil
 	})
 	return &g
 }
